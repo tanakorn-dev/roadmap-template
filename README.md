@@ -88,7 +88,7 @@ Fonts come from Google Fonts via a single `<link>` in `<head>`. Defaults are `DM
     "product":     "Your Product",                           // required
     "year":        2026,                                     // required
     "owner":       "Your Team",                              // optional
-    "lastUpdated": "2026-04-17",                             // optional (ISO date)
+    "lastUpdated": "2026-04-17",                             // optional; ISO "YYYY-MM-DD" renders as "Apr 17, 2026"
     "version":     "1.0",                                    // optional
     "eyebrow":     "Product Strategy · Annual Plan 2026",    // optional
     "title":       "Product <em>Roadmap</em>",               // optional, one <em> tag supported

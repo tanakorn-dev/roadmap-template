@@ -439,6 +439,18 @@
       .replace(/&lt;\/em&gt;/g, '</em>');
   }
 
+  // Format an ISO-ish date ("2026-04-17") as "Apr 17, 2026".
+  // Parse as UTC so the displayed day doesn't shift with the user's timezone.
+  // Non-ISO strings are returned as-is so teams can drop in pre-formatted values.
+  var MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function formatDate(value) {
+    if (!value) return '';
+    var iso = /^\d{4}-\d{2}-\d{2}$/.test(value);
+    var d = iso ? new Date(value + 'T00:00:00Z') : new Date(value);
+    if (isNaN(d.getTime())) return value;
+    return MONTH_NAMES[d.getUTCMonth()] + ' ' + d.getUTCDate() + ', ' + d.getUTCFullYear();
+  }
+
   function renderHeader(meta) {
     var product = meta.product || 'Product';
     var eyebrow = meta.eyebrow || ('Product Strategy · ' + (meta.year || ''));
@@ -447,7 +459,7 @@
     var items = [];
     if (product)       items.push({ label: 'Product', value: product });
     if (meta.owner)    items.push({ label: 'Owner',   value: meta.owner });
-    if (updated)       items.push({ label: 'Updated', value: updated });
+    if (updated)       items.push({ label: 'Updated', value: formatDate(updated) });
     if (meta.version)  items.push({ label: 'Version', value: meta.version });
 
     var metaHtml = items.map(function(i) {
