@@ -1,0 +1,88 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-json:
+    name: Validate roadmap JSON
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate roadmap-data.example.json
+        run: |
+          node -e "
+            const fs = require('fs');
+            const path = 'roadmap-data.example.json';
+            if (!fs.existsSync(path)) {
+              console.error('Missing ' + path);
+              process.exit(1);
+            }
+            const data = JSON.parse(fs.readFileSync(path, 'utf8'));
+            if (!data.meta || !data.quarters) {
+              console.error(path + ' is missing required top-level keys: meta, quarters');
+              process.exit(1);
+            }
+            if (!Array.isArray(data.quarters)) {
+              console.error(path + ': quarters must be an array');
+              process.exit(1);
+            }
+            const validStatus = new Set(['done','progress','planned','research']);
+            let cardCount = 0;
+            for (const q of data.quarters) {
+              if (!q.id || !q.label || !Array.isArray(q.months)) {
+                console.error(path + ': quarter missing id/label/months', q);
+                process.exit(1);
+              }
+              for (const m of q.months) {
+                if (!m.id || !m.en || !Array.isArray(m.cards)) {
+                  console.error(path + ': month missing id/en/cards', m);
+                  process.exit(1);
+                }
+                for (const c of m.cards) {
+                  if (!c.title || !c.description || !c.status) {
+                    console.error(path + ': card missing title/description/status', c);
+                    process.exit(1);
+                  }
+                  if (!validStatus.has(c.status)) {
+                    console.error(path + ': invalid status \"' + c.status + '\" on card \"' + c.title + '\"');
+                    process.exit(1);
+                  }
+                  cardCount++;
+                }
+              }
+            }
+            console.log('OK — ' + path + ' parsed successfully (' + cardCount + ' cards across ' + data.quarters.length + ' quarters).');
+          "
+
+      - name: Validate roadmap-data.json (if present)
+        run: |
+          if [ -f roadmap-data.json ]; then
+            node -e "JSON.parse(require('fs').readFileSync('roadmap-data.json','utf8')); console.log('OK — roadmap-data.json is valid JSON.');"
+          else
+            echo "No roadmap-data.json committed — skipping (expected for the public template)."
+          fi
+
+  lint-html:
+    name: Lint index.html
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check index.html exists and is non-empty
+        run: |
+          test -s index.html
+          grep -q '<!DOCTYPE html>' index.html
+          grep -q 'roadmap-data.example.json' index.html
+          echo "OK — index.html looks intact."

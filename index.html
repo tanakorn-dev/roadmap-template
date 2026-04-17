@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Roadmap</title>
+<meta name="description" content="A static, data-driven product roadmap. Edit one JSON file to publish your own.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1814;
+    --paper: #f5f0e8;
+    --cream: #ede8dc;
+    --warm-mid: #c8b89a;
+    --accent: #c0522a;
+    --done: #3a6b4a;
+    --done-light: #c8ddd0;
+    --in-progress: #c0522a;
+    --in-progress-light: #f0d5c8;
+    --planned: #6b5b8a;
+    --planned-light: #ddd5e8;
+    --research: #2a5a7a;
+    --research-light: #c5d8e8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', 'Noto Sans Thai', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 56px 64px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: rgba(192,82,42,0.15);
+    pointer-events: none;
+  }
+  .header-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--warm-mid);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(36px, 5vw, 60px);
+    line-height: 1.1;
+  }
+  header h1 em { color: var(--accent); font-style: italic; }
+  .header-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: 32px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(200,184,154,0.25);
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 4px; }
+  .meta-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--warm-mid); font-weight: 500; }
+  .meta-value { font-size: 15px; font-weight: 500; color: var(--paper); }
+
+  /* LEGEND */
+  .legend-bar {
+    background: var(--cream);
+    border-bottom: 1px solid rgba(200,184,154,0.5);
+    padding: 16px 64px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .legend-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--warm-mid); font-weight: 600; margin-right: 8px; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .badge-done     { background: var(--done-light);        color: var(--done);        }
+  .badge-done::before     { background: var(--done);        }
+  .badge-progress { background: var(--in-progress-light); color: var(--in-progress); }
+  .badge-progress::before { background: var(--in-progress); }
+  .badge-planned  { background: var(--planned-light);     color: var(--planned);     }
+  .badge-planned::before  { background: var(--planned);     }
+  .badge-research { background: var(--research-light);    color: var(--research);    }
+  .badge-research::before { background: var(--research);    }
+
+  /* MAIN */
+  main { max-width: 1100px; margin: 0 auto; padding: 56px 64px; }
+
+  /* SUMMARY */
+  .summary {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 16px;
+    padding: 36px 40px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease both;
+  }
+  .summary-item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; }
+  .summary-num { font-family: 'DM Serif Display', serif; font-size: 40px; line-height: 1; }
+  .summary-num.done     { color: #7ecf96; }
+  .summary-num.progress { color: #f0a882; }
+  .summary-num.planned  { color: #b8a8d8; }
+  .summary-num.research { color: #90c0d8; }
+  .summary-text { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--warm-mid); font-weight: 500; }
+
+  /* MONTH FILTER */
+  .month-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    padding: 0 8px;
+  }
+  .month-filter .filter-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--warm-mid);
+    margin-right: 4px;
+  }
+  .month-filter button {
+    font-family: 'DM Sans', 'Noto Sans Thai', sans-serif;
+    font-size: 13px;
+    padding: 5px 14px;
+    border-radius: 100px;
+    border: 1px solid rgba(200,184,154,0.4);
+    background: white;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .month-filter button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .month-filter button.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  /* TIMELINE */
+  .timeline { position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 120px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, rgba(200,184,154,0.8) 0%, rgba(200,184,154,0.1) 100%);
+  }
+
+  /* Q DIVIDER */
+  .q-divider {
+    display: flex;
+    align-items: center;
+    margin-bottom: 28px;
+    margin-top: 8px;
+  }
+  .q-label-col { width: 120px; flex-shrink: 0; padding-right: 28px; text-align: right; }
+  .q-pill {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+  .q-line-col { flex: 1; padding-left: 28px; }
+  .q-line { height: 1px; background: rgba(200,184,154,0.3); }
+
+  /* MONTH ROW */
+  .month-row {
+    display: flex;
+    margin-bottom: 36px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .month-row:nth-child(1)  { animation-delay: 0.04s; }
+  .month-row:nth-child(2)  { animation-delay: 0.08s; }
+  .month-row:nth-child(3)  { animation-delay: 0.12s; }
+  .month-row:nth-child(4)  { animation-delay: 0.16s; }
+  .month-row:nth-child(5)  { animation-delay: 0.20s; }
+  .month-row:nth-child(6)  { animation-delay: 0.24s; }
+  .month-row:nth-child(7)  { animation-delay: 0.28s; }
+  .month-row:nth-child(8)  { animation-delay: 0.32s; }
+  .month-row:nth-child(9)  { animation-delay: 0.36s; }
+  .month-row:nth-child(10) { animation-delay: 0.40s; }
+  .month-row:nth-child(11) { animation-delay: 0.44s; }
+  .month-row:nth-child(12) { animation-delay: 0.48s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0);    }
+  }
+
+  /* month label */
+  .month-label {
+    width: 120px;
+    flex-shrink: 0;
+    padding-right: 28px;
+    text-align: right;
+    padding-top: 5px;
+    position: relative;
+  }
+  .month-en {
+    font-family: 'DM Serif Display', serif;
+    font-size: 19px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .month-th {
+    font-size: 11px;
+    color: var(--warm-mid);
+    font-weight: 400;
+    margin-top: 3px;
+    letter-spacing: 0.02em;
+  }
+  /* dot */
+  .month-label::after {
+    content: '';
+    position: absolute;
+    right: -7px; top: 9px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--warm-mid);
+    border: 3px solid var(--paper);
+    box-shadow: 0 0 0 2px var(--warm-mid);
+  }
+  .month-row.current .month-label::after {
+    background: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent);
+    width: 14px; height: 14px;
+    right: -8px; top: 8px;
+  }
+  .month-row.current .month-en { color: var(--accent); }
+
+  /* cards */
+  .month-cards {
+    flex: 1;
+    padding-left: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card {
+    background: white;
+    border-radius: 10px;
+    padding: 16px 20px 16px 24px;
+    border: 1px solid rgba(200,184,154,0.35);
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .card:hover {
+    box-shadow: 0 6px 24px rgba(26,24,20,0.09);
+    transform: translateY(-1px);
+  }
+  .card.card-feature {
+    box-shadow: 0 2px 12px rgba(26,24,20,0.1);
+    border-left: 3px solid transparent;
+  }
+  .card.card-feature:has(.stripe-done)     { border-left-color: var(--done); }
+  .card.card-feature:has(.stripe-progress) { border-left-color: var(--in-progress); }
+  .card.card-feature:has(.stripe-planned)  { border-left-color: var(--planned); }
+  .card.card-feature:has(.stripe-research) { border-left-color: var(--research); }
+  .card-stripe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    border-radius: 10px 0 0 10px;
+  }
+  .stripe-done     { background: var(--done);        }
+  .stripe-progress { background: var(--in-progress); }
+  .stripe-planned  { background: var(--planned);     }
+  .stripe-research { background: var(--research);    }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .card h3 { font-size: 14px; font-weight: 600; line-height: 1.4; flex: 1; }
+  .card p  { font-size: 12px; color: #6b6560; line-height: 1.6; margin-bottom: 10px; }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tag {
+    padding: 2px 9px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 500;
+    background: var(--cream);
+    color: var(--ink);
+    letter-spacing: 0.02em;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 32px 64px 48px;
+    font-size: 12px;
+    color: var(--warm-mid);
+    border-top: 1px solid rgba(200,184,154,0.3);
+    letter-spacing: 0.05em;
+  }
+
+  /* ERROR STATE */
+  .load-error {
+    max-width: 640px;
+    margin: 64px auto;
+    padding: 28px 32px;
+    background: white;
+    border: 1px solid rgba(200,184,154,0.5);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .load-error h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+  .load-error code {
+    background: var(--cream);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .load-error pre {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    overflow-x: auto;
+    margin: 12px 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  @media (max-width: 680px) {
+    header, main { padding: 28px 20px; }
+    .legend-bar  { padding: 14px 20px; }
+    .summary     { grid-template-columns: repeat(2,1fr); padding: 24px 20px; }
+    .timeline::before { left: 68px; }
+    .month-label { width: 68px; padding-right: 18px; }
+    .month-en { font-size: 15px; }
+    .month-cards { padding-left: 20px; }
+    .q-label-col { width: 68px; padding-right: 18px; }
+    .q-line-col { padding-left: 20px; }
+    footer { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header id="header"></header>
+
+<div class="legend-bar">
+  <span class="legend-label">Status</span>
+  <span class="badge badge-done">Done</span>
+  <span class="badge badge-progress">In Progress</span>
+  <span class="badge badge-planned">Planned</span>
+  <span class="badge badge-research">Research</span>
+</div>
+
+<main>
+  <div class="month-filter" id="month-filter"></div>
+  <div class="summary" id="summary"></div>
+  <div class="timeline" id="timeline"></div>
+</main>
+
+<footer id="footer"></footer>
+
+<script>
+(function() {
+  var STATUS_MAP = {
+    done:     { stripe: 'stripe-done',     badge: 'badge-done',     label: 'Done' },
+    progress: { stripe: 'stripe-progress', badge: 'badge-progress', label: 'In Progress' },
+    planned:  { stripe: 'stripe-planned',  badge: 'badge-planned',  label: 'Planned' },
+    research: { stripe: 'stripe-research', badge: 'badge-research', label: 'Research' }
+  };
+
+  var SUMMARY_MAP = {
+    done:     { cls: 'done',     label: 'Completed' },
+    progress: { cls: 'progress', label: 'In Progress' },
+    planned:  { cls: 'planned',  label: 'Planned' },
+    research: { cls: 'research', label: 'Research' }
+  };
+
+  // Escape HTML to protect against stray characters in JSON content.
+  // The <em> tag in meta.title is whitelisted separately below.
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // Allow a simple `<em>...</em>` tag in meta.title for accent styling,
+  // escape everything else.
+  function renderTitle(raw) {
+    var esc = escapeHtml(raw);
+    return esc
+      .replace(/&lt;em&gt;/g, '<em>')
+      .replace(/&lt;\/em&gt;/g, '</em>');
+  }
+
+  function renderHeader(meta) {
+    var product = meta.product || 'Product';
+    var eyebrow = meta.eyebrow || ('Product Strategy · ' + (meta.year || ''));
+    var title   = meta.title   || 'Product <em>Roadmap</em>';
+    var updated = meta.lastUpdated || '';
+    var items = [];
+    if (product)       items.push({ label: 'Product', value: product });
+    if (meta.owner)    items.push({ label: 'Owner',   value: meta.owner });
+    if (updated)       items.push({ label: 'Updated', value: updated });
+    if (meta.version)  items.push({ label: 'Version', value: meta.version });
+
+    var metaHtml = items.map(function(i) {
+      return '<div class="meta-item"><span class="meta-label">' + escapeHtml(i.label) + '</span><span class="meta-value">' + escapeHtml(i.value) + '</span></div>';
+    }).join('');
+
+    document.getElementById('header').innerHTML =
+      '<p class="header-eyebrow">' + escapeHtml(eyebrow) + '</p>' +
+      '<h1>' + renderTitle(title) + '</h1>' +
+      (metaHtml ? '<div class="header-meta">' + metaHtml + '</div>' : '');
+
+    // Update <title> with product + year
+    document.title = product + (meta.year ? ' — Roadmap ' + meta.year : ' — Roadmap');
+  }
+
+  function renderFooter(meta) {
+    var text = meta.footer || ((meta.product || 'Product') + ' · Roadmap © ' + (meta.year || new Date().getFullYear()));
+    document.getElementById('footer').textContent = text;
+  }
+
+  function renderCard(card) {
+    var s = STATUS_MAP[card.status] || STATUS_MAP.planned;
+    var cls = card.feature ? 'card card-feature' : 'card';
+    var tagList = Array.isArray(card.tags) ? card.tags : [];
+    var tags = tagList.map(function(t) { return '<span class="tag">' + escapeHtml(t) + '</span>'; }).join('');
+    return '<div class="' + cls + '">' +
+      '<div class="card-stripe ' + s.stripe + '"></div>' +
+      '<div class="card-top"><h3>' + escapeHtml(card.title) + '</h3><span class="badge ' + s.badge + '">' + s.label + '</span></div>' +
+      '<p>' + escapeHtml(card.description) + '</p>' +
+      '<div class="card-tags">' + tags + '</div>' +
+      '</div>';
+  }
+
+  function renderMonth(month) {
+    var cls = month.current ? 'month-row current' : 'month-row';
+    var th = month.th ? escapeHtml(month.th) : '';
+    var thLabel = month.current ? (th ? th + ' ◀ current' : '◀ current') : th;
+    var cards = (month.cards || []).map(renderCard).join('\n');
+    return '<div class="' + cls + '" data-month="' + escapeHtml(month.id) + '">' +
+      '<div class="month-label"><div class="month-en">' + escapeHtml(month.en) + '</div><div class="month-th">' + thLabel + '</div></div>' +
+      '<div class="month-cards">' + cards + '</div>' +
+      '</div>';
+  }
+
+  function renderSummary(data) {
+    var counts = { done: 0, progress: 0, planned: 0, research: 0 };
+    data.quarters.forEach(function(q) {
+      q.months.forEach(function(m) {
+        (m.cards || []).forEach(function(c) { counts[c.status] = (counts[c.status] || 0) + 1; });
+      });
+    });
+    var html = '';
+    ['done', 'progress', 'planned', 'research'].forEach(function(key) {
+      var s = SUMMARY_MAP[key];
+      html += '<div class="summary-item"><span class="summary-num ' + s.cls + '">' + counts[key] + '</span><span class="summary-text">' + s.label + '</span></div>';
+    });
+    document.getElementById('summary').innerHTML = html;
+  }
+
+  function renderTimeline(data) {
+    var html = '';
+    data.quarters.forEach(function(q) {
+      html += '<div class="q-divider" data-quarter="' + escapeHtml(q.id) + '"><div class="q-label-col"><span class="q-pill">' + escapeHtml(q.label) + '</span></div><div class="q-line-col"><div class="q-line"></div></div></div>';
+      q.months.forEach(function(m) { html += renderMonth(m); });
+    });
+    document.getElementById('timeline').innerHTML = html;
+  }
+
+  function renderFilter(data) {
+    var html = '<span class="filter-label">Month</span>' +
+               '<button class="active" data-filter="all">All</button>';
+    data.quarters.forEach(function(q) {
+      q.months.forEach(function(m) {
+        html += '<button data-filter="' + escapeHtml(m.id) + '">' + escapeHtml(m.en) + '</button>';
+      });
+    });
+    document.getElementById('month-filter').innerHTML = html;
+  }
+
+  function initFilter(data) {
+    // Map quarter id -> list of month ids for show/hide of Q dividers.
+    var qMap = {};
+    data.quarters.forEach(function(q) {
+      qMap[q.id] = q.months.map(function(m) { return m.id; });
+    });
+
+    var buttons = document.querySelectorAll('.month-filter button');
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        buttons.forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        var filter = btn.getAttribute('data-filter');
+
+        document.querySelectorAll('.month-row[data-month]').forEach(function(row) {
+          row.style.display = (filter === 'all' || row.getAttribute('data-month') === filter) ? '' : 'none';
+        });
+
+        document.querySelectorAll('.q-divider[data-quarter]').forEach(function(div) {
+          var qId = div.getAttribute('data-quarter');
+          var months = qMap[qId] || [];
+          var hasVisible = months.some(function(m) {
+            var el = document.querySelector('.month-row[data-month="' + m + '"]');
+            return el && el.style.display !== 'none';
+          });
+          div.style.display = hasVisible ? '' : 'none';
+        });
+      });
+    });
+  }
+
+  function renderLoadError(err) {
+    var isFileProtocol = location.protocol === 'file:';
+    var msg = isFileProtocol
+      ? '<h2>Roadmap data can\'t load over <code>file://</code></h2>' +
+        '<p>Browsers block <code>fetch()</code> when the page is opened directly from disk. Serve the folder over a local HTTP server and reload:</p>' +
+        '<pre># Python 3\npython3 -m http.server 8000\n\n# Node\nnpx serve .\n\nThen open http://localhost:8000</pre>'
+      : '<h2>Couldn\'t load roadmap data</h2>' +
+        '<p>Neither <code>roadmap-data.json</code> nor <code>roadmap-data.example.json</code> could be fetched. Make sure at least one exists alongside <code>index.html</code>.</p>' +
+        '<pre>cp roadmap-data.example.json roadmap-data.json</pre>';
+    document.querySelector('main').innerHTML =
+      '<div class="load-error">' + msg + '<p style="margin-top:12px;color:#6b6560;font-size:12px">Error: ' + escapeHtml(String(err && err.message ? err.message : err)) + '</p></div>';
+  }
+
+  function fetchJson(path) {
+    return fetch(path).then(function(res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status + ' for ' + path);
+      return res.json();
+    });
+  }
+
+  // Try user's real data first, fall back to shipped example so a fresh
+  // clone renders immediately without copy-paste.
+  function loadData() {
+    return fetchJson('roadmap-data.json').catch(function() {
+      return fetchJson('roadmap-data.example.json');
+    });
+  }
+
+  function render(data) {
+    var meta = data.meta || {};
+    renderHeader(meta);
+    renderFilter(data);
+    renderSummary(data);
+    renderTimeline(data);
+    renderFooter(meta);
+    initFilter(data);
+  }
+
+  loadData()
+    .then(render)
+    .catch(function(err) {
+      console.error('Failed to load roadmap data:', err);
+      renderLoadError(err);
+    });
+})();
+</script>
+
+</body>
+</html>

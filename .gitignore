@@ -1,0 +1,41 @@
+# Your actual roadmap data — keep private.
+# Commit `roadmap-data.example.json` only; copy it to `roadmap-data.json` locally.
+roadmap-data.json
+
+# Internal planning docs — not for the public template.
+open-source-brief.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+.nova/
+
+# Node (only needed if you add tooling)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Build / deploy artifacts
+dist/
+build/
+.cache/
+.parcel-cache/
+.netlify/
+.vercel/
+.wrangler/
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log

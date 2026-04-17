@@ -1,0 +1,244 @@
+{
+  "meta": {
+    "product": "TaskFlow",
+    "year": 2026,
+    "owner": "Product Team",
+    "lastUpdated": "2026-04-17",
+    "version": "1.0",
+    "eyebrow": "Product Strategy · Annual Plan 2026",
+    "title": "Product <em>Roadmap</em>",
+    "footer": "TaskFlow · Public Roadmap © 2026"
+  },
+  "quarters": [
+    {
+      "id": "q1",
+      "label": "Q1",
+      "months": [
+        {
+          "id": "jan",
+          "en": "Jan",
+          "th": "มกราคม",
+          "current": false,
+          "cards": [
+            {
+              "title": "User Authentication",
+              "description": "Email/password sign-up, magic links, and OAuth with Google and GitHub. Includes session management and password reset flow.",
+              "status": "done",
+              "feature": false,
+              "tags": ["Backend", "Security"]
+            },
+            {
+              "title": "Dashboard MVP",
+              "description": "Landing screen after login — shows assigned tasks, recent activity, and upcoming deadlines at a glance.",
+              "status": "done",
+              "feature": false,
+              "tags": ["Frontend", "MVP"]
+            }
+          ]
+        },
+        {
+          "id": "feb",
+          "en": "Feb",
+          "th": "กุมภาพันธ์",
+          "current": false,
+          "cards": [
+            {
+              "title": "Task CRUD API",
+              "description": "REST endpoints for creating, reading, updating, and deleting tasks with full permission checks and audit logging.",
+              "status": "done",
+              "feature": false,
+              "tags": ["Backend", "API"]
+            },
+            {
+              "title": "Mobile App Scaffold",
+              "description": "Initial React Native project with navigation, shared component library, and CI pipeline for iOS and Android builds.",
+              "status": "done",
+              "feature": false,
+              "tags": ["Mobile", "Infrastructure"]
+            }
+          ]
+        },
+        {
+          "id": "mar",
+          "en": "Mar",
+          "th": "มีนาคม",
+          "current": false,
+          "cards": [
+            {
+              "title": "Team Workspaces",
+              "description": "Multi-tenant workspaces with role-based access control. Users can belong to multiple workspaces and switch between them seamlessly.",
+              "status": "done",
+              "feature": true,
+              "tags": ["Backend", "Frontend", "Multi-tenant"]
+            },
+            {
+              "title": "Onboarding Flow",
+              "description": "Guided first-run experience that helps new users create their first project, invite teammates, and learn core shortcuts.",
+              "status": "done",
+              "feature": false,
+              "tags": ["UX", "Growth"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "label": "Q2",
+      "months": [
+        {
+          "id": "apr",
+          "en": "Apr",
+          "th": "เมษายน",
+          "current": true,
+          "cards": [
+            {
+              "title": "Kanban Board",
+              "description": "Drag-and-drop board view with customizable columns, swim lanes, and WIP limits. Supports keyboard shortcuts for power users.",
+              "status": "progress",
+              "feature": true,
+              "tags": ["Frontend", "UX"]
+            },
+            {
+              "title": "Real-time Collaboration",
+              "description": "Live cursors, presence indicators, and conflict-free edits powered by CRDTs so teams can co-edit tasks without stepping on each other.",
+              "status": "progress",
+              "feature": true,
+              "tags": ["Backend", "Frontend", "Realtime"]
+            },
+            {
+              "title": "Slack Integration",
+              "description": "Two-way sync between TaskFlow tasks and Slack threads. Mentions, status changes, and comments flow between both tools.",
+              "status": "progress",
+              "feature": false,
+              "tags": ["Integration", "Productivity"]
+            }
+          ]
+        },
+        {
+          "id": "may",
+          "en": "May",
+          "th": "พฤษภาคม",
+          "current": false,
+          "cards": [
+            {
+              "title": "Recurring Tasks",
+              "description": "Schedule tasks that repeat daily, weekly, monthly, or on custom cron patterns. Supports skip and snooze options per occurrence.",
+              "status": "planned",
+              "feature": true,
+              "tags": ["Backend", "Scheduling"]
+            },
+            {
+              "title": "Time Tracking",
+              "description": "Built-in timer on every task plus manual time entry. Reports group by project, person, or tag with CSV export.",
+              "status": "planned",
+              "feature": true,
+              "tags": ["Frontend", "Reporting"]
+            },
+            {
+              "title": "Custom Fields",
+              "description": "Admins can define additional fields (text, number, date, select) on tasks and use them to filter and group views.",
+              "status": "planned",
+              "feature": false,
+              "tags": ["Backend", "Customization"]
+            }
+          ]
+        },
+        {
+          "id": "jun",
+          "en": "Jun",
+          "th": "มิถุนายน",
+          "current": false,
+          "cards": [
+            {
+              "title": "Public API v1",
+              "description": "Stable REST and GraphQL API with documented schema, rate limits, and SDKs for JavaScript, Python, and Go.",
+              "status": "planned",
+              "feature": true,
+              "tags": ["API", "Developer"]
+            },
+            {
+              "title": "Webhook Support",
+              "description": "Outgoing webhooks for task events with retry, signing, and a delivery log UI so teams can debug their integrations.",
+              "status": "planned",
+              "feature": false,
+              "tags": ["API", "Integration"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "label": "Q3",
+      "months": [
+        {
+          "id": "jul",
+          "en": "Jul",
+          "th": "กรกฎาคม",
+          "current": false,
+          "cards": [
+            {
+              "title": "AI Task Suggestions",
+              "description": "Context-aware AI assistant that proposes sub-tasks, drafts descriptions, and flags duplicates based on team history.",
+              "status": "research",
+              "feature": true,
+              "tags": ["AI", "Productivity"]
+            },
+            {
+              "title": "Automations Engine",
+              "description": "No-code if-this-then-that rules for moving tasks, assigning owners, and sending notifications when conditions are met.",
+              "status": "research",
+              "feature": true,
+              "tags": ["Automation", "Backend"]
+            }
+          ]
+        },
+        {
+          "id": "aug",
+          "en": "Aug",
+          "th": "สิงหาคม",
+          "current": false,
+          "cards": [
+            {
+              "title": "Native Desktop Apps",
+              "description": "Tauri-based desktop apps for macOS, Windows, and Linux with global shortcuts, menu bar quick-add, and offline queue.",
+              "status": "research",
+              "feature": true,
+              "tags": ["Desktop", "Cross-platform"]
+            },
+            {
+              "title": "Offline Mode",
+              "description": "Local-first sync so users can read and edit tasks on flaky networks. Conflicts resolved with last-writer-wins plus manual merge.",
+              "status": "research",
+              "feature": false,
+              "tags": ["Sync", "Mobile"]
+            }
+          ]
+        },
+        {
+          "id": "sep",
+          "en": "Sep",
+          "th": "กันยายน",
+          "current": false,
+          "cards": [
+            {
+              "title": "Q3 Retro & FY Planning",
+              "description": "Review KPIs from H1, gather feedback from customers and the team, and draft the Q4–Q1 2027 roadmap.",
+              "status": "research",
+              "feature": false,
+              "tags": ["Planning", "Strategy"]
+            },
+            {
+              "title": "Multi-region Architecture",
+              "description": "Evaluate active-active Postgres, edge caching, and regional queues to keep latency low for teams outside North America.",
+              "status": "research",
+              "feature": false,
+              "tags": ["Infrastructure", "Research"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
