@@ -10,7 +10,7 @@ A single-file HTML roadmap you publish by editing **one JSON file**. No framewor
 
 ![Preview](./screenshot.png)
 
-**Live demo:** https://your-username.github.io/roadmap-template/
+**Live demo:** https://roadmap-template.tanakorn-dev.workers.dev
 
 ## Features
 
@@ -26,7 +26,7 @@ A single-file HTML roadmap you publish by editing **one JSON file**. No framewor
 
 ```bash
 # 1. Use the template (or clone)
-git clone https://github.com/your-username/roadmap-template.git
+git clone https://github.com/tanakorn-dev/roadmap-template.git
 cd roadmap-template
 
 # 2. Copy the example data to your real roadmap file
