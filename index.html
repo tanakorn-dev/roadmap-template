@@ -528,12 +528,27 @@
     document.getElementById('timeline').innerHTML = html;
   }
 
+  // Pick the default filter: the first month flagged `current: true`,
+  // or "all" when no month is flagged.
+  function defaultFilterId(data) {
+    for (var qi = 0; qi < data.quarters.length; qi++) {
+      var months = data.quarters[qi].months || [];
+      for (var mi = 0; mi < months.length; mi++) {
+        if (months[mi].current) return months[mi].id;
+      }
+    }
+    return 'all';
+  }
+
   function renderFilter(data) {
+    var def = defaultFilterId(data);
+    function active(id) { return id === def ? ' class="active"' : ''; }
+
     var html = '<span class="filter-label">Month</span>' +
-               '<button class="active" data-filter="all">All</button>';
+               '<button' + active('all') + ' data-filter="all">All</button>';
     data.quarters.forEach(function(q) {
       q.months.forEach(function(m) {
-        html += '<button data-filter="' + escapeHtml(m.id) + '">' + escapeHtml(m.en) + '</button>';
+        html += '<button' + active(m.id) + ' data-filter="' + escapeHtml(m.id) + '">' + escapeHtml(m.en) + '</button>';
       });
     });
     document.getElementById('month-filter').innerHTML = html;
@@ -546,28 +561,34 @@
       qMap[q.id] = q.months.map(function(m) { return m.id; });
     });
 
+    function applyFilter(filter) {
+      document.querySelectorAll('.month-row[data-month]').forEach(function(row) {
+        row.style.display = (filter === 'all' || row.getAttribute('data-month') === filter) ? '' : 'none';
+      });
+
+      document.querySelectorAll('.q-divider[data-quarter]').forEach(function(div) {
+        var qId = div.getAttribute('data-quarter');
+        var months = qMap[qId] || [];
+        var hasVisible = months.some(function(m) {
+          var el = document.querySelector('.month-row[data-month="' + m + '"]');
+          return el && el.style.display !== 'none';
+        });
+        div.style.display = hasVisible ? '' : 'none';
+      });
+    }
+
     var buttons = document.querySelectorAll('.month-filter button');
     buttons.forEach(function(btn) {
       btn.addEventListener('click', function() {
         buttons.forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
-        var filter = btn.getAttribute('data-filter');
-
-        document.querySelectorAll('.month-row[data-month]').forEach(function(row) {
-          row.style.display = (filter === 'all' || row.getAttribute('data-month') === filter) ? '' : 'none';
-        });
-
-        document.querySelectorAll('.q-divider[data-quarter]').forEach(function(div) {
-          var qId = div.getAttribute('data-quarter');
-          var months = qMap[qId] || [];
-          var hasVisible = months.some(function(m) {
-            var el = document.querySelector('.month-row[data-month="' + m + '"]');
-            return el && el.style.display !== 'none';
-          });
-          div.style.display = hasVisible ? '' : 'none';
-        });
+        applyFilter(btn.getAttribute('data-filter'));
       });
     });
+
+    // Apply the picker's default selection on load (current month, or "all").
+    var initial = document.querySelector('.month-filter button.active');
+    if (initial) applyFilter(initial.getAttribute('data-filter'));
   }
 
   function renderLoadError(err) {
