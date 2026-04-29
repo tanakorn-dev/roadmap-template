@@ -23,12 +23,12 @@ There is **no build step**. No `package.json`, no bundler, no framework. The bro
 On `DOMContentLoaded` the IIFE in `<script>`:
 
 1. `loadData()` — tries `roadmap-data.json`, falls back to `roadmap-data.example.json`, otherwise calls `renderLoadError(err)`.
-2. `renderHeader(meta)` — title, eyebrow, owner, updated, version. Updates `document.title`.
-3. `renderFilter(data)` — generates the "All | Jan | Feb | …" pill buttons from `quarters[].months[]`.
+2. `renderHeader(meta)` — title, eyebrow, owner, updated (formatted via `formatDate()` from ISO `YYYY-MM-DD` to `Mon D, YYYY`), version. Updates `document.title`.
+3. `renderFilter(data)` — generates the "All | Jan | Feb | …" pill buttons. The button pre-marked `active` is whichever month has `current: true`, or `All` when none does (`defaultFilterId(data)` decides).
 4. `renderSummary(data)` — counts cards by status.
 5. `renderTimeline(data)` — Q dividers + month rows + cards.
 6. `renderFooter(meta)` — footer text.
-7. `initFilter(data)` — click handlers that toggle `.month-row` visibility and hide empty `.q-divider`s.
+7. `initFilter(data)` — wires click handlers and immediately calls `applyFilter()` against the initially-active button so the visible rows + Q dividers match the picker's default selection on load.
 
 ### Key CSS behaviors
 

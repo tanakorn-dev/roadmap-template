@@ -18,7 +18,7 @@ A single-file HTML roadmap you publish by editing **one JSON file**. No framewor
 - **Zero build.** One `index.html` with inline CSS and vanilla JS. Open it behind any static server and it renders.
 - **Status-aware.** Four statuses out of the box: `done`, `progress`, `planned`, `research`, each with its own color.
 - **Feature highlight.** Flag a card with `"feature": true` to get a colored left border and shadow.
-- **Month filter.** Click a month pill to focus; empty quarters auto-hide.
+- **Month filter.** Click a month pill to focus; empty quarters auto-hide. The picker defaults to whichever month is flagged `"current": true` in JSON (falls back to **All** when nothing is flagged).
 - **Bilingual ready.** Each month has `en` and `th` labels. Swap `th` for any secondary language your team reads.
 - **Mobile first.** Timeline collapses cleanly under 680px.
 
@@ -54,7 +54,7 @@ Everything visible on the page comes from `roadmap-data.json`. Open it in any ed
 - Set `meta.eyebrow` (the small uppercase line above the title) and `meta.title` (supports one `<em>...</em>` for the accent word).
 - Set `meta.footer` to override the footer text.
 - Add, reorder, or remove `quarters[]` and their `months[]` — the month filter and Q dividers regenerate automatically.
-- Flip `month.current` to `true` on the month you're in; it gets the accent dot and a "◀ current" marker.
+- Flip `month.current` to `true` on the month you're in; it gets the accent dot, a "◀ current" marker, and becomes the picker's default filter on load. Set every month's `current` to `false` to land on **All** instead.
 
 ### Colors
 
@@ -103,7 +103,7 @@ Fonts come from Google Fonts via a single `<link>` in `<head>`. Defaults are `DM
           "id":      "jan",                                  // required, unique (used by filter)
           "en":      "Jan",                                  // required, primary label
           "th":      "มกราคม",                               // optional, secondary label
-          "current": false,                                  // optional, highlights the month
+          "current": false,                                  // optional; highlights the month and pre-selects it in the filter
           "cards": [
             {
               "title":       "Feature Name",                 // required
